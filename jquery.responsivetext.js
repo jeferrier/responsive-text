@@ -123,7 +123,7 @@
 
               //No sense correcting for values that are too small
               //NOTE: Should change this to less than single pixel threshold
-              if (distance < .005) return;
+              if (distance < 0.005) return;
 
               //This function yields a rate of change. We need fontSizeRatio to determine
               //which direction that change should be in.
