@@ -12,7 +12,7 @@ like height and width in their containing elements.
         'height' : true,
         'heightRatio': 0.1
     });
->
+
 ####Result
 The font size will match the height of the element * height ratio. Responsive 
 Text will not attempt to prevent lines from wrapping.
@@ -25,7 +25,7 @@ Text will not attempt to prevent lines from wrapping.
         'width' : true,
         'widthRatio': 0.1
     });
->
+
 ####Result
 The font size will match the width of the element * width ratio. Responsive 
 Text will force text onto one line (the result may be VERY small font-size).
@@ -41,7 +41,6 @@ Text will force text onto one line (the result may be VERY small font-size).
         'fill' : true
     });
 
->
 ####Result
 Responsive Text will attempt to fill the element with the text. Responsive Text 
 attempt to match the current height of the element (with wrapping). Since line
