@@ -25,7 +25,7 @@
           'height'         : false,
           'heightRatio'    : 0.1,
           'fill'           : false,
-          'maxGuesses'     : 3
+          'maxGuesses'     : 10
         }, options);
 
     return this.each(function(){
@@ -98,19 +98,40 @@
             $this.css("font-size", Math.max(Math.min(fontSize, parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize)) + "px");
 
             //Now we need to verify that this new set of dimensions is smaller than our target.
-            //NOTE: In further revisions, this will also adjust UP to the desired height (if we guess too small).
             var guessCount = 0;
-            while ($this.height() > $this.parent().height() && guessCount < settings.maxGuesses){
+            while (guessCount < settings.maxGuesses){
 
-              //Evaluate the current area of this element
-              var currentArea = $this.height() * $this.width();
+              //Evaluate the current height of this element
+              var fontSizeRatio = $this.height() / $this.parent().height();
 
-              //Find the effective font size of this element
-              var effectiveFontSize = currentArea / indexWidth;
-              effectiveFontSize = Math.sqrt(effectiveFontSize);
+              //Limiting the growth from the max value of this function...
+              //NOTE: Should make this appropriate for large values
+              //        i.e. asymptotically approaching 1
+              if (fontSizeRatio >= 2) var distance = 1.5;
+              else {
+                var distance = Math.abs(1.0 - fontSizeRatio);
 
-              //Adjust ourselves down by the difference between them
-              fontSize -= (effectiveFontSize - fontSize);
+                // 1/4 * sin(pi * (x - 1/2)) + 1/4
+                //y ranging from 0 to 0.5
+                //x ranging from 0 to 1
+                //following sin from x = -pi/2 to x = pi/2 on graph of sin(x)
+                distance -= 0.5;
+                distance *= Math.PI;
+                distance = Math.sin(distance) * 0.25;
+                distance += 0.25;
+              }
+
+              //No sense correcting for values that are too small
+              //NOTE: Should change this to less than single pixel threshold
+              if (distance < .005) return;
+
+              //This function yields a rate of change. We need fontSizeRatio to determine
+              //which direction that change should be in.
+              if (fontSizeRatio > 1){
+                fontSize *= 1.0 - distance;
+              } else {
+                fontSize *= 1.0 + distance;
+              }
 
               $this.css("font-size", Math.max(Math.min(fontSize, parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize)) + "px");
               guessCount++;
