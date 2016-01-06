@@ -28,6 +28,22 @@
           'maxGuesses'     : 10
         }, options);
 
+    function nudger(distance){
+
+      if (distance > 1.0) return 0.5;
+
+      //1/2 * x^2 * (2 - x^2)
+      //approximates sin pretty well in our interval
+      //x ranges from 0 - 1
+      //y ranges from 0 - 0.5
+      //follows sin from x = -pi/2 to x = pi/2 in sin(x)
+      distance *= distance;
+      distance = distance * (2 - distance);
+      distance /= 2.0;
+      return distance;
+
+    }
+
     return this.each(function(){
 
       //We don't support dynamic font sizing with dynamically sized elements
@@ -104,22 +120,8 @@
               //Evaluate the current height of this element
               var fontSizeRatio = $this.height() / $this.parent().height();
 
-              //Limiting the growth from the max value of this function...
-              //NOTE: Should make this appropriate for large values
-              //        i.e. asymptotically approaching 1
-              if (fontSizeRatio >= 2) var distance = 1.5;
-              else {
-                var distance = Math.abs(1.0 - fontSizeRatio);
-
-                // 1/4 * sin(pi * (x - 1/2)) + 1/4
-                //y ranging from 0 to 0.5
-                //x ranging from 0 to 1
-                //following sin from x = -pi/2 to x = pi/2 on graph of sin(x)
-                distance -= 0.5;
-                distance *= Math.PI;
-                distance = Math.sin(distance) * 0.25;
-                distance += 0.25;
-              }
+              var distance = Math.abs(1.0 - fontSizeRatio);
+              distance = nudger(distance);
 
               //No sense correcting for values that are too small
               //NOTE: Should change this to less than single pixel threshold
