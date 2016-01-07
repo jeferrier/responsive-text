@@ -109,6 +109,9 @@
 
             //Now let's try to guess the new font size from our formula
             //This is the 0th guess, and will ALWAYS happen
+
+            //NOTE: If indexWidth is off, the initial guess is terrible,
+            //  wasting guesses. We should attempt to fix this.
             var squaredFontSize = area / indexWidth;
             var fontSize = Math.sqrt(squaredFontSize);
             $this.css("font-size", Math.max(Math.min(fontSize, parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize)) + "px");
@@ -150,6 +153,8 @@
           var indexWidth = $this.width() / parseFloat($this.css("font-size"));
           $this.css("white-space", oldWhiteSpace);
 
+          //NOTE: If indexWidth is off, this whole function will not work
+          //  correctly. Producing font sizes too big or too small.
           resizer = function(){
             var maxWidth = $this.parent().width();
             var fontSize = (maxWidth * parseFloat(settings.widthRatio)) / indexWidth;
